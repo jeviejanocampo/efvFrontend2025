@@ -9,7 +9,7 @@ function getBrandsByCategory($conn, $categoryId) {
     $query = "
         SELECT b.brand_id, b.brand_name, b.brand_image, b.status, b.created_at, b.updated_at
         FROM brands b
-        WHERE b.cat_id = ? AND b.status = 'active'
+        WHERE b.cat_id = ? AND (b.status = 'active' OR b.status = 'on order')
     ";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('i', $categoryId);  // Bind the category_id parameter

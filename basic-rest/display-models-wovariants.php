@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Query to fetch model_id, model_name, model_img, price, and w_variant
     $query = "SELECT model_id, model_name, CONCAT('$baseImageUrl', model_img) AS model_img, price, w_variant
               FROM models
-              WHERE status = 'active' AND w_variant = 'none'";  // Filter for models with w_variant = 'none'
+              WHERE (status = 'active' OR status = 'on order') AND w_variant = 'none'";  // Filter for models with w_variant = 'none'
     $result = $conn->query($query);
 
     if ($result->num_rows > 0) {

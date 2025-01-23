@@ -5,7 +5,7 @@ include 'dbcon.php'; // Include your database connection file
 
 // Function to fetch products based on brand_id
 function getProducts($conn, $brand_id) {
-    // Fetch active products from the models table based on the brand_id and join with the brands table
+    // Fetch products from the models table based on the brand_id and join with the brands and products tables
     $productsQuery = "
         SELECT 
             m.model_id, 
@@ -17,13 +17,17 @@ function getProducts($conn, $brand_id) {
             m.status, 
             m.created_at, 
             m.updated_at,
-            b.brand_name  -- Include brand_name from the brands table
+            b.brand_name,  -- Include brand_name from the brands table
+            p.description,  -- Fetch description from the products table
+            p.stocks_quantity  -- Fetch stocks_quantity from the products table
         FROM 
             models m
         JOIN 
-            brands b ON m.brand_id = b.brand_id  -- Join with the brands table to get the brand_name
+            brands b ON m.brand_id = b.brand_id  -- Join with the brands table
+        LEFT JOIN 
+            products p ON m.model_id = p.model_id  -- Join with the products table to fetch additional columns
         WHERE 
-            m.brand_id = ? AND m.status = 'active'";  // Only select active models
+            m.brand_id = ? AND (m.status = 'active' OR m.status = 'on order')";  // Include models with active or on-order status
 
     $stmt = $conn->prepare($productsQuery);
     $stmt->bind_param("i", $brand_id); // Bind the brand_id parameter

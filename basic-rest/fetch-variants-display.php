@@ -6,7 +6,7 @@ include 'dbcon.php'; // Include your database connection file
 // Function to fetch variants for a given model_id
 function getVariants($conn, $model_id) {
     // Fetch active variants based on the model_id
-    $variantsQuery = "SELECT variant_id, model_id, product_name, variant_image, part_id, price, specification, description
+    $variantsQuery = "SELECT variant_id, model_id, product_name, variant_image, part_id, price, stocks_quantity, specification, description
                       FROM variants
                       WHERE model_id = ?";
 

@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $model_id = $conn->real_escape_string($_GET['model_id']);
     $baseImageUrl = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/';
 
-    // Query to fetch product details
+    // Query to fetch product details including the status
     $query = "SELECT 
                 model_id, 
                 model_name, 
@@ -21,9 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 description, 
                 m_part_id, 
                 stocks_quantity, 
+                status,  
                 CONCAT('$baseImageUrl', model_img) AS model_img 
               FROM products 
-              WHERE model_id = '$model_id' AND status = 'active'";
+              WHERE model_id = '$model_id'";
 
     $result = $conn->query($query);
 
