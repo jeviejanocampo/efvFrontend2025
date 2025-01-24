@@ -18,7 +18,7 @@ try {
     }
 
     $user_id = $inputData['user_id'];
-    $imageBaseUrl = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/';
+    $imageBaseUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
     // Query to fetch checkout details from the cart table for the given user_id
     $query = "

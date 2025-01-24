@@ -14,7 +14,7 @@ function getCategories($conn) {
     if ($categoriesResult->num_rows > 0) {
         while ($row = $categoriesResult->fetch_assoc()) {
             // Append the base URL for the category image path
-            $row['cat_image'] = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/' . $row['cat_image'];
+            $row['cat_image'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['cat_image'];
             $categories[] = $row;
         }
     }

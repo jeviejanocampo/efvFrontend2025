@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     $model_id = $conn->real_escape_string($_GET['model_id']);
-    $baseImageUrl = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/';
+    $baseImageUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
     // Query to fetch product details including the status
     $query = "SELECT 

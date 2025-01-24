@@ -39,7 +39,7 @@ function getProducts($conn, $brand_id) {
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             // Append the base URL for the model image path
-            $row['model_img'] = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/' . $row['model_img'];
+            $row['model_img'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['model_img'];
             $products[] = $row;
         }
     }

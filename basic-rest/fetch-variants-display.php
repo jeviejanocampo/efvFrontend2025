@@ -20,7 +20,7 @@ function getVariants($conn, $model_id) {
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             // Append the base URL for the variant image path
-            $row['variant_image'] = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/' . $row['variant_image'];
+            $row['variant_image'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['variant_image'];
             $variants[] = $row;
         }
     }

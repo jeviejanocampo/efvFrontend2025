@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 include 'dbcon.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $baseImageUrl = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/';
+    $baseImageUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
     // Query to fetch model_id, model_name, model_img, price, and w_variant
     $query = "SELECT model_id, model_name, CONCAT('$baseImageUrl', model_img) AS model_img, price, w_variant

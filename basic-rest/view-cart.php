@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         while ($row = $result->fetch_assoc()) {
             // Add the model image URL from the 'product-images' folder
-            $row['model_img'] = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/' . $row['model_img'];
+            $row['model_img'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['model_img'];
             $cart_items[] = $row;
         }
         

@@ -20,7 +20,7 @@ function getBrandsByCategory($conn, $categoryId) {
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             // Append the base URL for the brand image path
-            $row['brand_image'] = 'http://192.168.1.2/efvFrontend2025/basic-rest/product-images/' . $row['brand_image'];
+            $row['brand_image'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['brand_image'];
             $brands[] = $row;
         }
     }
