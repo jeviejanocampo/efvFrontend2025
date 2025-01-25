@@ -27,7 +27,7 @@ function getProducts($conn, $brand_id) {
         LEFT JOIN 
             products p ON m.model_id = p.model_id  -- Join with the products table to fetch additional columns
         WHERE 
-            m.brand_id = ? AND (m.status = 'active' OR m.status = 'on order')";  // Include models with active or on-order status
+            m.brand_id = ? AND (m.status = 'active' OR m.status = 'on order')";
 
     $stmt = $conn->prepare($productsQuery);
     $stmt->bind_param("i", $brand_id); // Bind the brand_id parameter
@@ -40,6 +40,14 @@ function getProducts($conn, $brand_id) {
         while ($row = $result->fetch_assoc()) {
             // Append the base URL for the model image path
             $row['model_img'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['model_img'];
+
+            // Add dynamic button text based on the status
+            if ($row['status'] === 'on order') {
+                $row['cart_button_text'] = 'Available for Pre-Order';
+            } else {
+                $row['cart_button_text'] = 'Add to Cart';
+            }
+
             $products[] = $row;
         }
     }
