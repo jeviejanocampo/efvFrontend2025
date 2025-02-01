@@ -11,25 +11,29 @@ try {
         throw new Exception('User ID is required');
     }
 
-    // Query to fetch all order_ids for the given user_id
-    $query = "SELECT order_id FROM orders WHERE user_id = $user_id ORDER BY created_at DESC";
+    // Query to fetch order_id and created_at for the given user_id
+    $query = "SELECT order_id, created_at FROM orders WHERE user_id = $user_id ORDER BY created_at DESC";
     $result = mysqli_query($conn, $query);
 
     if (!$result) {
         throw new Exception("Database Query Failed: " . mysqli_error($conn));
     }
 
-    // Initialize an array to store all order IDs
+    // Initialize an array to store all order IDs and created_at timestamps
     $orders = [];
 
     // Fetch all the orders for the user
     while ($order = mysqli_fetch_assoc($result)) {
-        $orders[] = $order['order_id']; // Add each order_id to the array
+        // Add each order_id and created_at to the array
+        $orders[] = [
+            'order_id' => $order['order_id'],
+            'created_at' => $order['created_at']
+        ];
     }
 
     if (count($orders) > 0) {
-        // Send the order_ids as a JSON response
-        echo json_encode(['order_ids' => $orders]);
+        // Send the order_ids and created_at as a JSON response
+        echo json_encode(['orders' => $orders]);
     } else {
         // If no orders exist for the given user_id, send a meaningful response
         echo json_encode(['message' => 'No orders found for this user']);
