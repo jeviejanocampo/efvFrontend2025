@@ -12,11 +12,11 @@ if (!isset($_GET['customer_id'])) {
 $customer_id = intval($_GET['customer_id']);
 
 try {
-    // Query to fetch all orders for the given customer_id, sorted by updated_at descending
+    // Query to fetch all orders for the given customer_id, excluding "Pending" or "pending" status
     $query = "
         SELECT order_id, status, updated_at 
         FROM orders 
-        WHERE user_id = ? 
+        WHERE user_id = ? AND status NOT IN ('Pending', 'pending')
         ORDER BY updated_at DESC
     ";
 

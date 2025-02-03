@@ -25,6 +25,7 @@ try {
         SELECT 
             c.cart_id, 
             c.model_id, 
+            c.variant_id,
             c.product_name, 
             c.brand_name, 
             c.price, 

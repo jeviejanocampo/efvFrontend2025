@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Query to fetch cart items and related model images
     $query = "
-        SELECT c.cart_id, c.product_name, c.brand_name, c.price, c.quantity, c.total_price, c.status, 
+        SELECT c.cart_id, c.product_name, c.variant_id, c.brand_name, c.price, c.quantity, c.total_price, c.status, 
                m.model_img 
         FROM cart c
         JOIN models m ON c.model_id = m.model_id

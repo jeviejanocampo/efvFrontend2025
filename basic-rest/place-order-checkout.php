@@ -31,6 +31,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_begin_transaction($conn);
 
         try {
+            // Check stock availability before proceeding
+            foreach ($data['order_details'] as $item) {
+                $model_id = $item['model_id'];
+                $variant_id = $item['variant_id'];
+                $quantity = $item['quantity'];
+
+                if ($variant_id != 0) {
+                    // Check stock in variants table
+                    $checkStockQuery = "SELECT stocks_quantity FROM variants WHERE variant_id = ?";
+                    $stmtCheckStock = mysqli_prepare($conn, $checkStockQuery);
+                    mysqli_stmt_bind_param($stmtCheckStock, 'i', $variant_id);
+                    mysqli_stmt_execute($stmtCheckStock);
+                    mysqli_stmt_bind_result($stmtCheckStock, $stocks_quantity);
+                    mysqli_stmt_fetch($stmtCheckStock);
+                    mysqli_stmt_close($stmtCheckStock);
+
+                    if ($stocks_quantity < $quantity) {
+                        throw new Exception("Insufficient stock for variant_id: $variant_id");
+                    }
+                } else {
+                    // Check stock in products table
+                    $checkStockQuery = "SELECT stocks_quantity FROM products WHERE model_id = ?";
+                    $stmtCheckStock = mysqli_prepare($conn, $checkStockQuery);
+                    mysqli_stmt_bind_param($stmtCheckStock, 'i', $model_id);
+                    mysqli_stmt_execute($stmtCheckStock);
+                    mysqli_stmt_bind_result($stmtCheckStock, $stocks_quantity);
+                    mysqli_stmt_fetch($stmtCheckStock);
+                    mysqli_stmt_close($stmtCheckStock);
+
+                    if ($stocks_quantity < $quantity) {
+                        throw new Exception("Insufficient stock for model_id: $model_id");
+                    }
+                }
+            }
+
             // Insert into `orders` table
             $orderQuery = "INSERT INTO orders (user_id, total_items, total_price, order_notes, pickup_date, pickup_location, payment_method, status, created_at, updated_at) 
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -42,12 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $order_id = mysqli_insert_id($conn);
 
             // Insert each item into `order_details` table
-            $orderDetailsQuery = "INSERT INTO order_details (order_id, model_id, product_name, brand_name, quantity, price, total_price, product_status, created_at, updated_at) 
-                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $orderDetailsQuery = "INSERT INTO order_details (order_id, model_id, variant_id, product_name, brand_name, quantity, price, total_price, product_status, created_at, updated_at) 
+                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtDetails = mysqli_prepare($conn, $orderDetailsQuery);
 
             foreach ($data['order_details'] as $item) {
                 $model_id = $item['model_id'];
+                $variant_id = $item['variant_id'];
                 $product_name = $item['product_name'];
                 $brand_name = $item['brand_name'];
                 $quantity = $item['quantity'];
@@ -57,8 +93,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $created_at_item = $created_at;
                 $updated_at_item = $updated_at;
 
-                mysqli_stmt_bind_param($stmtDetails, 'iissiddsss', $order_id, $model_id, $product_name, $brand_name, $quantity, $price, $total_price_item, $product_status, $created_at_item, $updated_at_item);
+                mysqli_stmt_bind_param($stmtDetails, 'iiissiddsss', $order_id, $model_id, $variant_id, $product_name, $brand_name, $quantity, $price, $total_price_item, $product_status, $created_at_item, $updated_at_item);
                 mysqli_stmt_execute($stmtDetails);
+
+                // Subtract quantity from the respective table
+                if ($variant_id == 0) {
+                    // Update products table for model_id
+                    $updateProductQuery = "UPDATE products SET stocks_quantity = stocks_quantity - ? WHERE model_id = ?";
+                    $stmtUpdateProduct = mysqli_prepare($conn, $updateProductQuery);
+                    mysqli_stmt_bind_param($stmtUpdateProduct, 'ii', $quantity, $model_id);
+                    mysqli_stmt_execute($stmtUpdateProduct);
+                } else {
+                    // Update variants table for variant_id
+                    $updateVariantQuery = "UPDATE variants SET stocks_quantity = stocks_quantity - ? WHERE variant_id = ?";
+                    $stmtUpdateVariant = mysqli_prepare($conn, $updateVariantQuery);
+                    mysqli_stmt_bind_param($stmtUpdateVariant, 'ii', $quantity, $variant_id);
+                    mysqli_stmt_execute($stmtUpdateVariant);
+                }
             }
 
             // Delete cart items where user_id matches
@@ -71,14 +122,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mysqli_commit($conn);
 
             // Return a success response
-            echo json_encode(['success' => true, 'message' => 'Order placed successfully and cart items deleted.']);
+            echo json_encode(['success' => true, 'message' => 'Order placed successfully, stock updated, and cart items deleted.']);
         } catch (Exception $e) {
             // Rollback the transaction in case of an error
             mysqli_rollback($conn);
 
             // Return an error response
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Failed to place the order. Please try again.', 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Failed to place the order, out of stocks or your quantity exceeds the available stocks. Please try again later, thank you.', 'error' => $e->getMessage()]);
         }
     } else {
         // Return an error response for invalid input
