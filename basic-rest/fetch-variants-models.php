@@ -11,9 +11,23 @@ $response = [
 ];
 
 try {
-    // Fetch all variants from the 'variants' table
-    $variantQuery = "SELECT variant_id, model_id, product_name, variant_image, part_id, price, specification, description, stocks_quantity 
-                     FROM variants";
+    // Fetch all variants and join models to get brand_id, then join brands to get brand_name
+    $variantQuery = "SELECT 
+                        v.variant_id, 
+                        v.model_id, 
+                        v.product_name, 
+                        v.variant_image, 
+                        v.part_id, 
+                        v.price, 
+                        v.specification, 
+                        v.description, 
+                        v.stocks_quantity,
+                        m.brand_id,
+                        b.brand_name
+                     FROM variants v
+                     LEFT JOIN models m ON v.model_id = m.model_id
+                     LEFT JOIN brands b ON m.brand_id = b.brand_id";
+
     $variantResult = mysqli_query($conn, $variantQuery);
 
     if (!$variantResult) {
@@ -26,10 +40,22 @@ try {
         $response['variants'][] = $variant;
     }
 
-    // Fetch all models from the 'models' table, joining with the 'brands' table to get the brand name
-    $modelQuery = "SELECT models.model_id, models.model_name, models.model_img, models.price, models.brand_id, models.w_variant, models.status, brands.brand_name
-                   FROM models
-                   LEFT JOIN brands ON models.brand_id = brands.brand_id";  // Join with 'brands' table
+    // Fetch all models from the 'models' table, joining with the 'brands' table
+    $modelQuery = "SELECT 
+                        m.model_id, 
+                        m.model_name, 
+                        m.model_img, 
+                        m.price, 
+                        m.brand_id, 
+                        m.w_variant,
+                        m.status, 
+                        b.brand_name,
+                        p.description AS product_description,
+                        p.stocks_quantity
+                   FROM models m
+                   LEFT JOIN brands b ON m.brand_id = b.brand_id
+                   LEFT JOIN products p ON m.model_id = p.model_id"; 
+
     $modelResult = mysqli_query($conn, $modelQuery);
 
     if (!$modelResult) {
@@ -40,9 +66,6 @@ try {
         // Append the full image URL for the model image
         $model['model_img'] = "http://192.168.1.32/efvFrontend2025/basic-rest/product-images/" . $model['model_img'];
         
-        // Optionally, you can include the brand name in the model data if you want
-        $model['brand_name'] = $model['brand_name'];
-
         $response['models'][] = $model;
     }
 
@@ -59,4 +82,5 @@ try {
 
 // Close the database connection
 mysqli_close($conn);
+
 ?>

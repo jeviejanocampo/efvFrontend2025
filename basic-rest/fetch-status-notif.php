@@ -1,27 +1,41 @@
 <?php
 
 header('Content-Type: application/json');
+// Include database connection
 include 'dbcon.php';
 
-// Check if the customer_id parameter is provided
+// Check if customer_id is provided
 if (!isset($_GET['customer_id'])) {
     echo json_encode(['error' => 'customer_id is required']);
     exit();
 }
 
 $customer_id = intval($_GET['customer_id']);
+$last_updated_at = isset($_GET['last_updated_at']) ? $_GET['last_updated_at'] : null;
 
 try {
-    // Query to fetch all orders for the given customer_id, excluding "Pending" or "pending" status
+    // Base query
     $query = "
         SELECT order_id, status, updated_at 
         FROM orders 
-        WHERE user_id = ? AND status NOT IN ('Pending', 'pending')
-        ORDER BY updated_at DESC
+        WHERE user_id = ? AND status = 'Ready To Pickup'
     ";
 
+    // If last_updated_at is provided, fetch only newer orders
+    if ($last_updated_at) {
+        $query .= " AND updated_at > ?";
+    }
+
+    $query .= " ORDER BY updated_at DESC";
+
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $customer_id);
+
+    if ($last_updated_at) {
+        $stmt->bind_param("is", $customer_id, $last_updated_at);
+    } else {
+        $stmt->bind_param("i", $customer_id);
+    }
+
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -30,7 +44,6 @@ try {
         $orders[] = $row;
     }
 
-    // Return the orders as JSON
     echo json_encode($orders);
 
     $stmt->close();

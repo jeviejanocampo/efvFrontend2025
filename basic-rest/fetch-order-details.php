@@ -29,6 +29,7 @@ $query = "
     od.price,
     od.total_price,
     od.product_status,
+    od.part_id, 
     o.status AS order_status,
     o.payment_method,  
     o.created_at,  

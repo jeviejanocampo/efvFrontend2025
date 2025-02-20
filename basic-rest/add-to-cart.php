@@ -18,7 +18,7 @@ if (
     isset($data['variant_id']) &&
     isset($data['product_name']) &&
     isset($data['brand_name']) &&
-    isset($data['price']) &&
+    isset($data['SRP']) &&
     isset($data['quantity']) &&
     isset($data['total_price']) &&
     isset($data['status'])
@@ -28,7 +28,7 @@ if (
     $variant_id = $data['variant_id'];
     $product_name = $data['product_name'];
     $brand_name = $data['brand_name'];
-    $price = $data['price'];
+    $price = $data['SRP'];
     $quantity = $data['quantity'];
     $total_price = $data['total_price'];
     $status = $data['status'];

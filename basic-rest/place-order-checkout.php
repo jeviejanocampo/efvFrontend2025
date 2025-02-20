@@ -77,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $order_id = mysqli_insert_id($conn);
 
             // Insert each item into `order_details` table
-            $orderDetailsQuery = "INSERT INTO order_details (order_id, model_id, variant_id, product_name, brand_name, quantity, price, total_price, product_status, created_at, updated_at) 
-                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $orderDetailsQuery = "INSERT INTO order_details (order_id, model_id, variant_id, product_name, brand_name, quantity, price, total_price, product_status, part_id, created_at, updated_at) 
+                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmtDetails = mysqli_prepare($conn, $orderDetailsQuery);
 
             foreach ($data['order_details'] as $item) {
@@ -90,12 +90,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $price = $item['price'];
                 $total_price_item = $item['total_price'];
                 $product_status = $item['status']; // Get the status for each item
+            
+                // Generate part_id
+                if ($variant_id == 0) {
+                    // Fetch m_part_id from the products table
+                    $getPartIdQuery = "SELECT m_part_id FROM products WHERE model_id = ?";
+                    $stmtGetPartId = mysqli_prepare($conn, $getPartIdQuery);
+                    mysqli_stmt_bind_param($stmtGetPartId, 'i', $model_id);
+                    mysqli_stmt_execute($stmtGetPartId);
+                    mysqli_stmt_bind_result($stmtGetPartId, $m_part_id);
+                    mysqli_stmt_fetch($stmtGetPartId);
+                    mysqli_stmt_close($stmtGetPartId);
+            
+                    $part_id = $m_part_id;
+                } else {
+                    // Generate part_id using order_id if variant_id is not 0
+                    $last_four_digits = substr($order_id, -4);
+                    $part_id = $order_id . '-' . $last_four_digits;
+                }
+            
                 $created_at_item = $created_at;
                 $updated_at_item = $updated_at;
-
-                mysqli_stmt_bind_param($stmtDetails, 'iiissiddsss', $order_id, $model_id, $variant_id, $product_name, $brand_name, $quantity, $price, $total_price_item, $product_status, $created_at_item, $updated_at_item);
+            
+                mysqli_stmt_bind_param($stmtDetails, 'iiissiddssss', $order_id, $model_id, $variant_id, $product_name, $brand_name, $quantity, $price, $total_price_item, $product_status, $part_id, $created_at_item, $updated_at_item);
                 mysqli_stmt_execute($stmtDetails);
-
+            
                 // Subtract quantity from the respective table
                 if ($variant_id == 0) {
                     // Update products table for model_id
@@ -111,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     mysqli_stmt_execute($stmtUpdateVariant);
                 }
             }
+            
 
             // Delete cart items where user_id matches
             $deleteCartQuery = "DELETE FROM cart WHERE user_id = ?";

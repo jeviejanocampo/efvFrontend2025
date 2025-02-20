@@ -11,7 +11,7 @@ include 'dbcon.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate input data
+    // Validate input data  
     $requiredFields = ['user_id', 'model_id', 'product_name', 'price', 'quantity'];
     foreach ($requiredFields as $field) {
         if (empty($data[$field])) {
