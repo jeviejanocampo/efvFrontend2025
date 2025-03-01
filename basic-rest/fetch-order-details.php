@@ -29,7 +29,13 @@ $query = "
     od.price,
     od.total_price,
     od.product_status,
-    od.part_id, 
+    
+    CASE 
+        WHEN m.w_variant = 'YES' OR m.w_variant = 'yes' 
+        THEN (SELECT v.part_id FROM variants v WHERE v.model_id = m.model_id LIMIT 1) 
+        ELSE od.part_id 
+    END AS part_id,
+
     o.status AS order_status,
     o.payment_method,  
     o.created_at,  
@@ -45,8 +51,7 @@ $query = "
             models m ON od.model_id = m.model_id
         WHERE 
             od.order_id = ?
-
-    ";
+        ";
 
 // Use prepared statements to prevent SQL injection
 $stmt = $conn->prepare($query);

@@ -34,30 +34,33 @@ try {
         }
     }
 
-    // Fetch models
-    $modelsQuery = "SELECT 
-                      model_id, 
-                      model_name, 
-                      model_img, 
-                      price, 
-                      brand_id, 
-                      w_variant, 
-                      status, 
-                      created_at, 
-                      updated_at 
-                    FROM models 
-                    WHERE price > 0";
-    $modelsResult = mysqli_query($conn, $modelsQuery);
+        // Fetch models with stock quantity from products table
+        $modelsQuery = "SELECT 
+        m.model_id, 
+        m.model_name, 
+        m.model_img, 
+        m.price, 
+        m.brand_id, 
+        m.w_variant, 
+        m.status, 
+        m.created_at, 
+        m.updated_at, 
+        COALESCE(p.stocks_quantity, 0) AS product_stocks_quantity
+        FROM models m
+        LEFT JOIN products p ON m.model_id = p.model_id
+        WHERE m.price > 0";
 
-    $models = [];
-    if ($modelsResult) {
-        while ($row = mysqli_fetch_assoc($modelsResult)) {
-            // Prepend the base URL to the model image
-            $row['image_url'] = $imageBaseUrl . $row['model_img'];
-            unset($row['model_img']); // Remove original field if unnecessary
-            $models[] = $row;
+        $modelsResult = mysqli_query($conn, $modelsQuery);
+
+        $models = [];
+        if ($modelsResult) {
+            while ($row = mysqli_fetch_assoc($modelsResult)) {
+                // Prepend the base URL to the model image
+                $row['image_url'] = $imageBaseUrl . $row['model_img'];
+                unset($row['model_img']); // Remove original field if unnecessary
+                $models[] = $row;
+            }
         }
-    }
 
     // Combine data and return as JSON
     echo json_encode([
