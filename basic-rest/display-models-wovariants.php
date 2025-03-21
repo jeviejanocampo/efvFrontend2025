@@ -6,10 +6,14 @@ include 'dbcon.php';
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $baseImageUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
-    // Query to fetch model_id, model_name, model_img, price, and w_variant
-    $query = "SELECT model_id, model_name, CONCAT('$baseImageUrl', model_img) AS model_img, price, w_variant
-              FROM models
-              WHERE (status = 'active' OR status = 'on order') AND w_variant = 'none'";  // Filter for models with w_variant = 'none'
+    // Query to fetch model_id, model_name, model_img, price, w_variant, and stocks_quantity
+    $query = "SELECT m.model_id, m.model_name, CONCAT('$baseImageUrl', m.model_img) AS model_img, 
+                     m.price, m.w_variant, p.stocks_quantity
+              FROM models m
+              LEFT JOIN products p ON m.model_id = p.model_id  -- Join models with products based on model_id
+              WHERE (m.status = 'active' OR m.status = 'on order') 
+                AND m.w_variant = 'none'";  // Filter for models with w_variant = 'none'
+
     $result = $conn->query($query);
 
     if ($result->num_rows > 0) {
@@ -21,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 'model_name' => $row['model_name'],
                 'model_img' => $row['model_img'],
                 'price' => $row['price'],
-                'w_variant' => $row['w_variant'],  // Include the w_variant field if needed later
+                'w_variant' => $row['w_variant'],
+                'stocks_quantity' => $row['stocks_quantity'] ?? 0  // Default to 0 if null
             ];
         }
 

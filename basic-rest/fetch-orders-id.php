@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-include 'dbcon.php'; // Ensure this file establishes the DB connection and assigns it to $conn
+include 'dbcon.php';
 
 try {
     // Get the user_id from the request (assumes it is sent as a GET parameter)
