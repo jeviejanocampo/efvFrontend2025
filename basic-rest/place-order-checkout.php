@@ -67,10 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Insert into `orders` table
-            $orderQuery = "INSERT INTO orders (user_id, total_items, total_price, order_notes, pickup_date, pickup_location, payment_method, status, created_at, updated_at) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $orderQuery = "INSERT INTO orders (user_id, total_items, total_price, original_total_amount, order_notes, pickup_date, pickup_location, payment_method, status, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $orderQuery);
-            mysqli_stmt_bind_param($stmt, 'iissssssss', $user_id, $total_items, $total_price, $order_notes, $pickup_date, $pickup_location, $payment_method, $status, $created_at, $updated_at);
+            mysqli_stmt_bind_param($stmt, 'iiddsssssss', $user_id, $total_items, $total_price, $total_price, $order_notes, $pickup_date, $pickup_location, $payment_method, $status, $created_at, $updated_at);
             mysqli_stmt_execute($stmt);
 
             // Get the last inserted order_id
