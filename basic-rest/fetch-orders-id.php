@@ -24,11 +24,26 @@ try {
 
     // Fetch all the orders for the user
     while ($order = mysqli_fetch_assoc($result)) {
-        // Add each order_id, created_at, and status to the array
+        // Get the reference_id from the order_reference table based on order_id
+        $order_id = $order['order_id'];
+        $ref_query = "SELECT reference_id FROM order_reference WHERE order_id = $order_id";
+        $ref_result = mysqli_query($conn, $ref_query);
+
+        if (!$ref_result) {
+            throw new Exception("Failed to fetch reference_id: " . mysqli_error($conn));
+        }
+
+        $reference_id = null;
+        if ($ref_row = mysqli_fetch_assoc($ref_result)) {
+            $reference_id = $ref_row['reference_id']; // Get reference_id
+        }
+
+        // Add each order data along with reference_id to the array
         $orders[] = [
             'order_id' => $order['order_id'],
             'created_at' => $order['created_at'],
-            'status' => $order['status'] // Include status in the response
+            'status' => $order['status'],
+            'reference_id' => $reference_id // Include reference_id in the response
         ];
     }
 

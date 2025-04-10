@@ -27,7 +27,7 @@ $query = "
     od.brand_name,
     od.quantity,
     od.price,
-    od.total_price,
+    od.total_price, 
     od.product_status,
     
     CASE 
@@ -36,6 +36,7 @@ $query = "
         ELSE od.part_id 
     END AS part_id,
 
+    o.total_price AS order_total_price,  
     o.status AS order_status,
     o.payment_method,  
     o.created_at,  

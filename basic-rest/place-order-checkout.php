@@ -61,10 +61,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     mysqli_stmt_close($stmtCheckStock);
 
                     if ($stocks_quantity < $quantity) {
-                        throw new Exception("Insufficient stock for model_id: $model_id");
+                        // Check if the product is "on order"
+                        $checkStatusQuery = "SELECT status FROM products WHERE model_id = ?";
+                        $stmtCheckStatus = mysqli_prepare($conn, $checkStatusQuery);
+                        mysqli_stmt_bind_param($stmtCheckStatus, 'i', $model_id);
+                        mysqli_stmt_execute($stmtCheckStatus);
+                        mysqli_stmt_bind_result($stmtCheckStatus, $product_status);
+                        mysqli_stmt_fetch($stmtCheckStatus);
+                        mysqli_stmt_close($stmtCheckStatus);
+
+                        if (strtolower($product_status) !== 'on order') {
+                            throw new Exception("Insufficient stock for model_id: $model_id");
+                        }
                     }
                 }
             }
+
 
             // Insert into `orders` table
             $orderQuery = "INSERT INTO orders (user_id, total_items, total_price, original_total_amount, order_notes, pickup_date, pickup_location, payment_method, status, created_at, updated_at) 
