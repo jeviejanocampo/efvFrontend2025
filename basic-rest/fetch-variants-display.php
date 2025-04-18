@@ -2,9 +2,12 @@
 header('Content-Type: application/json');
 
 include 'dbcon.php'; // Include your database connection file
+include 'ip-config.php'; // Include ip-config.php for baseImageUrl
 
 // Function to fetch variants for a given model_id
 function getVariants($conn, $model_id) {
+    global $baseImageUrl; // Access the baseImageUrl from ip-config.php
+
     // Fetch active variants based on the model_id
     $variantsQuery = "SELECT variant_id, model_id, product_name, variant_image, part_id, price, stocks_quantity, specification, description
                       FROM variants
@@ -19,8 +22,8 @@ function getVariants($conn, $model_id) {
     $variants = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            // Append the base URL for the variant image path
-            $row['variant_image'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['variant_image'];
+            // Use baseImageUrl from ip-config.php for variant image path
+            $row['variant_image'] = $baseImageUrl . $row['variant_image'];
             $variants[] = $row;
         }
     }

@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 
 // Include database connection file
 include 'dbcon.php';
+include 'ip-config.php'; // Include ip-config.php for baseImageUrl
 
 // Initialize response array
 $response = [
@@ -35,8 +36,8 @@ try {
     }
 
     while ($variant = mysqli_fetch_assoc($variantResult)) {
-        // Append the full image URL for the variant image
-        $variant['variant_image'] = "http://192.168.1.32/efvFrontend2025/basic-rest/product-images/" . $variant['variant_image'];
+        // Use baseImageUrl from ip-config.php for variant image path
+        $variant['variant_image'] = $baseImageUrl . $variant['variant_image'];
         $response['variants'][] = $variant;
     }
 
@@ -63,8 +64,8 @@ try {
     }
 
     while ($model = mysqli_fetch_assoc($modelResult)) {
-        // Append the full image URL for the model image
-        $model['model_img'] = "http://192.168.1.32/efvFrontend2025/basic-rest/product-images/" . $model['model_img'];
+        // Use baseImageUrl from ip-config.php for model image path
+        $model['model_img'] = $baseImageUrl . $model['model_img'];
         
         $response['models'][] = $model;
     }

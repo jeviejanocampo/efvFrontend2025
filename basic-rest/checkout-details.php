@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 
 include 'dbcon.php'; // Include the database connection
+include 'ip-config.php'; // Add this near your dbcon include
 
 $response = [];
 
@@ -18,8 +19,7 @@ try {
     }
 
     $user_id = $inputData['user_id'];
-    $imageBaseUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
-
+    
     // Query to fetch checkout details from the cart table for the given user_id
     $query = "
         SELECT 
@@ -43,7 +43,7 @@ try {
     ";
 
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('si', $imageBaseUrl, $user_id);
+    $stmt->bind_param('si', $baseImageUrl, $user_id);
     $stmt->execute();
 
     $result = $stmt->get_result();

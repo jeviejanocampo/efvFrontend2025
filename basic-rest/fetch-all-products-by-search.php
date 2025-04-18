@@ -3,10 +3,10 @@ header('Content-Type: application/json');
 
 // Include database connection file
 include 'dbcon.php';
+include 'ip-config.php';       
 
 try {
     // Base URL for product images
-    $imageBaseUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
     // Fetch variants
     $variantsQuery = "SELECT 
@@ -29,7 +29,7 @@ try {
     if ($variantsResult) {
         while ($row = mysqli_fetch_assoc($variantsResult)) {
             // Ensure image URL is complete
-            $row['image_url'] = $imageBaseUrl . $row['image_url'];
+            $row['image_url'] = $baseImageUrl . $row['image_url'];
             $variants[] = $row;
         }
     }
@@ -56,7 +56,7 @@ try {
         if ($modelsResult) {
             while ($row = mysqli_fetch_assoc($modelsResult)) {
                 // Prepend the base URL to the model image
-                $row['image_url'] = $imageBaseUrl . $row['model_img'];
+                $row['image_url'] = $baseImageUrl . $row['model_img'];
                 unset($row['model_img']); // Remove original field if unnecessary
                 $models[] = $row;
             }

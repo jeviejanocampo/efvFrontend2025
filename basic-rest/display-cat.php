@@ -2,9 +2,9 @@
 header('Content-Type: application/json');
 
 include 'dbcon.php';
+include 'ip-config.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $baseImageUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
     // Query to fetch brand_id and brand_image
     $query = "SELECT brand_id, CONCAT('$baseImageUrl', brand_image) AS brand_image FROM brands WHERE status = 'active'";

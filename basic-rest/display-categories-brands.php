@@ -1,10 +1,12 @@
 <?php
 header('Content-Type: application/json');
 
-include 'dbcon.php'; // Include your database connection file
+include 'dbcon.php';           
+include 'ip-config.php';       
 
-// Function to fetch active categories
 function getCategories($conn) {
+    global $baseImageUrl; 
+
     // Fetch active categories
     $categoriesQuery = "SELECT category_id, category_name, cat_image FROM categories WHERE status = 'active'";
     $categoriesResult = $conn->query($categoriesQuery);
@@ -13,8 +15,8 @@ function getCategories($conn) {
     $categories = [];
     if ($categoriesResult->num_rows > 0) {
         while ($row = $categoriesResult->fetch_assoc()) {
-            // Append the base URL for the category image path
-            $row['cat_image'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['cat_image'];
+            // Use baseImageUrl directly (no need to append 'product-images/')
+            $row['cat_image'] = $baseImageUrl . $row['cat_image'];  // Corrected this line
             $categories[] = $row;
         }
     }

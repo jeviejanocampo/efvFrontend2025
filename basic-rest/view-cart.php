@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 
 include 'dbcon.php';
+include 'ip-config.php'; // Include ip-config.php for baseImageUrl
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the input data
@@ -33,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cart_items = [];
         
         while ($row = $result->fetch_assoc()) {
-            // Add the model image URL from the 'product-images' folder
-            $row['model_img'] = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/' . $row['model_img'];
+            // Use baseImageUrl from ip-config.php for model image path
+            $row['model_img'] = $baseImageUrl . $row['model_img'];
             $cart_items[] = $row;
         }
         

@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 
 // Include the database connection
 include 'dbcon.php'; 
+include 'ip-config.php';       
 
 // Get the order_id from the query string
 $order_id = isset($_GET['order_id']) ? $_GET['order_id'] : null;
@@ -13,9 +14,6 @@ if ($order_id === null) {
     echo json_encode(['error' => 'Order ID is required']);
     exit;
 }
-
-// The base URL for the images
-$image_base_url = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
 // Prepare the SQL query to fetch order details based on the order_id
 $query = "
@@ -65,7 +63,7 @@ $order_details = $result->fetch_all(MYSQLI_ASSOC);
 foreach ($order_details as &$order_detail) {
     if (!empty($order_detail['model_img'])) {
         // Concatenate the base URL with the model_img path
-        $order_detail['model_img_url'] = $image_base_url . $order_detail['model_img'];
+        $order_detail['model_img_url'] = $baseImageUrl . $order_detail['model_img'];
     } else {
         $order_detail['model_img_url'] = null;  // No image available
     }

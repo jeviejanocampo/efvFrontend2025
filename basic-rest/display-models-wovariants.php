@@ -2,9 +2,9 @@
 header('Content-Type: application/json');
 
 include 'dbcon.php';
+include 'ip-config.php';       
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $baseImageUrl = 'http://192.168.1.32/efvFrontend2025/basic-rest/product-images/';
 
     // Query to fetch model_id, model_name, model_img, price, w_variant, and stocks_quantity
     $query = "SELECT m.model_id, m.model_name, CONCAT('$baseImageUrl', m.model_img) AS model_img, 
