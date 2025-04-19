@@ -5,7 +5,7 @@ include 'dbcon.php'; // Include your database connection file
 include 'ip-config.php'; // Include ip-config.php for baseImageUrl
 
 // Function to fetch active brands based on category_id
-function getBrandsByCategory($conn, $categoryId) {
+function getBrandsByCategory($conn, $categoryId, $baseImageUrl) {
     // Fetch active brands by category ID, using the category_id from categories table
     $query = "
         SELECT b.brand_id, b.brand_name, b.brand_image, b.status, b.created_at, b.updated_at
@@ -34,7 +34,7 @@ $categoryId = isset($_GET['category_id']) ? $_GET['category_id'] : null;
 
 // If category ID is provided, fetch the brands
 if ($categoryId) {
-    $brands = getBrandsByCategory($conn, $categoryId);
+    $brands = getBrandsByCategory($conn, $categoryId, $baseImageUrl);
     echo json_encode($brands);
 } else {
     echo json_encode(['message' => 'Category ID not provided']);
