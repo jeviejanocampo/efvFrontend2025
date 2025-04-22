@@ -21,6 +21,7 @@ $query = "
     od.order_detail_id,
     od.order_id,
     od.model_id,
+    od.variant_id,
     od.product_name,
     od.brand_name,
     od.quantity,

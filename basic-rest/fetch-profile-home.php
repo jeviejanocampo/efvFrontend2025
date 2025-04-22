@@ -14,7 +14,7 @@ if (isset($_GET['customer_id'])) {
     if ($result->num_rows > 0) {
         $customer = $result->fetch_assoc();
 
-        $profilePic = $customer['profile_pic'] ? $baseApiUrl . $customer['profile_pic'] : null;
+        $profilePic = $customer['profile_pic'] ? $baseApiUrlProfile . $customer['profile_pic'] : null;
 
         echo json_encode([
             'full_name' => $customer['full_name'],

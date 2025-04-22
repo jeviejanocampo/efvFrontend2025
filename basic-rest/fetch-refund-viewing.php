@@ -21,7 +21,8 @@ $sql = "SELECT
             orf.reference_id,  -- Select reference_id from order_reference
             u.name AS processed_by_name,  -- Fetch processed_by user name from users table
             u.role AS processed_by_role,  -- Fetch processed_by user role from users table
-            o.original_total_amount  -- Fetch original_total_amount from orders table
+            o.original_total_amount, -- Fetch original_total_amount from orders table
+            o.total_price 
         FROM 
             refund_order ro
         LEFT JOIN 
