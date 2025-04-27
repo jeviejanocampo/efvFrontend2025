@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             $response['success'] = true;
             $response['message'] = 'Profile picture updated successfully';
-            $response['profile_pic'] = 'http://192.168.1.32/efvManagement2025/public/uploads/' . $newFileName; // Adjust URL as needed
+            $response['profile_pic'] = 'http://192.168.223.22/efvManagement2025/public/uploads/' . $newFileName; // Adjust URL as needed
         } else {
             $response['message'] = 'Failed to update database';
         }

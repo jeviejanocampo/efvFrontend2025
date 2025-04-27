@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Query to fetch model_id, model_name, model_img, price, w_variant, and stocks_quantity
     $query = "SELECT m.model_id, m.model_name, CONCAT('$baseImageUrl', m.model_img) AS model_img, 
-                     m.price, m.w_variant, p.stocks_quantity
+                     m.price, m.w_variant, p.stocks_quantity, m.status
               FROM models m
               LEFT JOIN products p ON m.model_id = p.model_id  -- Join models with products based on model_id
               WHERE (m.status = 'active' OR m.status = 'on order') 
@@ -26,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 'model_img' => $row['model_img'],
                 'price' => $row['price'],
                 'w_variant' => $row['w_variant'],
-                'stocks_quantity' => $row['stocks_quantity'] ?? 0  // Default to 0 if null
+                'stocks_quantity' => $row['stocks_quantity'] ?? 0,  
+                'status' => $row['status']
             ];
         }
 
