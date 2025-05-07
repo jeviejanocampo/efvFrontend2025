@@ -3,6 +3,9 @@ header('Content-Type: application/json');
 error_reporting(0); // Disable PHP warnings and notices
 ini_set('display_errors', 0); // Suppress error display
 
+date_default_timezone_set('Asia/Manila');
+
+
 // Include database connection file
 include 'dbcon.php';
 

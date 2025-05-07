@@ -5,6 +5,13 @@
 </head>
 <body>
     <h2>Image from Laravel Storage</h2>
-    <img src="http://localhost/efvManagement2025/public/product-images/b7.jpg" alt="Laravel Image" width="300">
-</body>
+    <img src="https://midnightblue-rail-125415.hostingersite.com/product-images/b6.jpg" alt="Laravel Image" width="300">
+
+    <?php
+echo date_default_timezone_get();
+echo "<br>";
+echo date("Y-m-d H:i:s");
+?>
+
+    </body>
 </html>
