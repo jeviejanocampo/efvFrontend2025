@@ -3,8 +3,12 @@ header('Content-Type: application/json');
 
 // Include database connection
 include 'dbcon.php';
+include 'ip-config.php';       
 
-$baseImageUrl = "ttps://midnightblue-rail-125415.hostingersite.com/public/product-images/";
+// $baseImageUrl = "http://192.168.1.32/efvManagement2025/public/product-images/";
+
+// $baseImageUrl = "https://midnightblue-rail-125415.hostingersite.com/public/product-images/";
+
 
 if (!isset($_GET['variant_id'])) {
     echo json_encode([

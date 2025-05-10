@@ -17,7 +17,7 @@ if ($order_id === null) {
 
 // Prepare the SQL query to fetch order details based on the order_id
 $query = "
-   SELECT 
+SELECT 
     od.order_detail_id,
     od.order_id,
     od.model_id,
@@ -28,7 +28,7 @@ $query = "
     od.price,
     od.total_price, 
     od.product_status,
-    
+
     CASE 
         WHEN m.w_variant = 'YES' OR m.w_variant = 'yes' 
         THEN (SELECT v.part_id FROM variants v WHERE v.model_id = m.model_id LIMIT 1) 
@@ -42,16 +42,24 @@ $query = "
     o.updated_at,
     od.created_at,
     od.updated_at AS detail_updated_at,
-    m.model_img
-        FROM 
-            order_details od
-        INNER JOIN 
-            orders o ON od.order_id = o.order_id
-        LEFT JOIN 
-            models m ON od.model_id = m.model_id
-        WHERE 
-            od.order_id = ?
-        ";
+    m.model_img,
+
+    gp.status AS gcash_status,
+    pp.status AS pnb_status
+
+FROM 
+    order_details od
+INNER JOIN 
+    orders o ON od.order_id = o.order_id
+LEFT JOIN 
+    models m ON od.model_id = m.model_id
+LEFT JOIN 
+    gcash_payment gp ON o.order_id = gp.order_id
+LEFT JOIN 
+    pnb_payment pp ON o.order_id = pp.order_id
+WHERE 
+    od.order_id = ?
+";
 
 // Use prepared statements to prevent SQL injection
 $stmt = $conn->prepare($query);
